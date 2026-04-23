@@ -1,60 +1,58 @@
-import { Router } from 'express';
-import multer from 'multer';
-import jwt from 'jsonwebtoken';
+import { Router } from "express";
+import authRoutes from "./auth.js";
+import { authMiddleware } from "../middlewares/auth.js";
 
-// 🔐 IMPORTA LOGIN
-import authRoutes from './auth.js';
-
-// seus controllers
-import { currentStock, dashboard, listProducts } from '../controllers/stockController.js';
-import { createMovement, listMovements } from '../controllers/movementController.js';
-import { importMonthly } from '../controllers/importController.js';
+// (se você tiver rotas separadas, pode importar aqui)
+// import productsRoutes from "./products.js";
+// import movementsRoutes from "./movements.js";
+// import dashboardRoutes from "./dashboard.js";
 
 const router = Router();
-const upload = multer();
 
+// ==================
+// ROTAS LIVRES (SEM TOKEN)
+// ==================
+router.use("/auth", authRoutes);
 
-// =======================
-// 🔐 MIDDLEWARE DE AUTH
-// =======================
-function auth(req, res, next) {
-  const token = req.headers.authorization?.split(" ")[1];
+// ==================
+// ROTAS PROTEGIDAS (COM TOKEN)
+// ==================
 
-  if (!token) return res.status(401).json({ erro: "Sem token" });
+// 🔥 TESTE PROTEGIDO
+router.get("/teste", authMiddleware, (req, res) => {
+  res.json({ msg: "Acesso liberado 🔓", user: req.user });
+});
 
-  try {
-    const decoded = jwt.verify(token, "SEGREDO");
-    req.user = decoded;
-    next();
-  } catch {
-    return res.status(401).json({ erro: "Token inválido" });
-  }
-}
+// 🔥 PRODUCTS
+router.get("/products", authMiddleware, (req, res) => {
+  res.json({ msg: "Produtos funcionando 🚀" });
+});
 
+// 🔥 MOVEMENTS
+router.get("/movements", authMiddleware, (req, res) => {
+  res.json({ msg: "Movimentos funcionando 🚀" });
+});
 
-// =======================
-// 🔓 ROTAS PÚBLICAS
-// =======================
+// 🔥 DASHBOARD
+router.get("/dashboard", authMiddleware, (req, res) => {
+  const { month, year } = req.query;
 
-// health check (não protege)
-router.get('/health', (req, res) => res.json({ ok: true }));
+  res.json({
+    msg: "Dashboard funcionando 🚀",
+    month,
+    year
+  });
+});
 
-// login / registro
-router.use('/auth', authRoutes);
+// 🔥 STOCK
+router.get("/stock/current", authMiddleware, (req, res) => {
+  const { month, year } = req.query;
 
-
-// =======================
-// 🔐 ROTAS PROTEGIDAS
-// =======================
-
-router.get('/dashboard', auth, dashboard);
-router.get('/stock/current', auth, currentStock);
-router.get('/products', auth, listProducts);
-
-router.post('/imports/monthly', auth, upload.single('file'), importMonthly);
-
-router.get('/movements', auth, listMovements);
-router.post('/movements', auth, createMovement);
-
+  res.json({
+    msg: "Estoque funcionando 🚀",
+    month,
+    year
+  });
+});
 
 export default router;
