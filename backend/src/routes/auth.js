@@ -1,40 +1,68 @@
-import express from "express";
+import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { prisma } from "../lib.js";
 
-const router = express.Router();
+const router = Router();
 
-// ⚠️ temporário (depois vai pro banco)
-const users = [];
-
-// registro
+// ==================
+// REGISTER
+// ==================
 router.post("/register", async (req, res) => {
-  const { email, senha } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-  const hash = await bcrypt.hash(senha, 10);
+    const hash = await bcrypt.hash(password, 10);
 
-  users.push({ email, senha: hash });
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        passwordHash: hash
+      }
+    });
 
-  res.json({ msg: "Usuário criado" });
+    res.json({ msg: "Usuário criado", user });
+
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: error.message });
+  }
 });
 
-// login
+// ==================
+// LOGIN
+// ==================
 router.post("/login", async (req, res) => {
-  const { email, senha } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = users.find(u => u.email === email);
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
 
-  if (!user) return res.status(404).json({ erro: "Usuário não encontrado" });
+    if (!user) {
+      return res.status(404).json({ erro: "Usuário não encontrado" });
+    }
 
-  const ok = await bcrypt.compare(senha, user.senha);
+    const ok = await bcrypt.compare(password, user.passwordHash);
 
-  if (!ok) return res.status(401).json({ erro: "Senha inválida" });
+    if (!ok) {
+      return res.status(401).json({ erro: "Senha inválida" });
+    }
 
-  const token = jwt.sign({ email }, "SEGREDO", {
-    expiresIn: "1d"
-  });
+    const token = jwt.sign(
+      { id: user.id },
+      "SEGREDO",
+      { expiresIn: "1d" }
+    );
 
-  res.json({ token });
+    res.json({ token });
+
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: error.message });
+  }
 });
 
 export default router;
