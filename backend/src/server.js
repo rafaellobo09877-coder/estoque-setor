@@ -5,8 +5,9 @@ import routes from './routes/index.js';
 const app = express();
 
 // 🔥 resolve erro CORS
-app.use(cors());
-
+app.use(cors({
+  origin: '*'
+}));
 // 🔥 permite JSON
 app.use(express.json());
 
