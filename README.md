@@ -2,6 +2,8 @@
 
 Sistema web completo para controle de estoque com importação de dados, registro de movimentações e visualização em tempo real.
 
+---
+
 ## 🚀 Tecnologias
 
 * React + Vite
@@ -10,13 +12,17 @@ Sistema web completo para controle de estoque com importação de dados, registr
 * Prisma ORM
 * SQLite
 
+---
+
 ## 📊 Funcionalidades
 
-* Importação automática de planilha Excel
-* Cadastro e controle de produtos
+* Importação automática de planilhas Excel
+* Cadastro e gerenciamento de produtos
 * Registro de entradas e saídas
 * Cálculo automático de saldo
 * Dashboard com visão geral do estoque
+
+---
 
 ## 🔄 Fluxo do Sistema
 
@@ -25,9 +31,11 @@ Sistema web completo para controle de estoque com importação de dados, registr
 3. Registro das movimentações ao longo do mês
 4. Atualização automática do saldo
 
+---
+
 ## ▶️ Como rodar o projeto
 
-### Backend
+### 🔧 Backend
 
 ```bash
 cd backend
@@ -38,10 +46,12 @@ npx prisma db push
 npm run dev
 ```
 
-Backend rodando em:
+Backend disponível em:
 http://localhost:3333
 
-### Frontend
+---
+
+### 💻 Frontend
 
 ```bash
 cd frontend
@@ -49,16 +59,24 @@ npm install
 npm run dev
 ```
 
-Frontend rodando em:
+Frontend disponível em:
 http://localhost:5173
+
+---
 
 ## 📸 Preview
 
-(Adicionar imagens aqui)
+### Dashboard do sistema
+
+![Dashboard](./dashboard.png)
+
+---
 
 ## 📌 Objetivo
 
-Projeto desenvolvido com foco em simular um sistema real utilizado para gestão de estoque em ambientes corporativos.
+Projeto desenvolvido com foco em simular um sistema real de gestão de estoque utilizado em ambientes corporativos.
+
+---
 
 ## 🔧 Próximas melhorias
 
@@ -66,4 +84,3 @@ Projeto desenvolvido com foco em simular um sistema real utilizado para gestão 
 * Geração de relatórios (PDF/Excel)
 * Filtros avançados
 * Alertas de estoque mínimo
-
